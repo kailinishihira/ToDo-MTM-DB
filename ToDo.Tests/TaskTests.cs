@@ -54,5 +54,36 @@ namespace ToDo.Tests
           //Assert
           CollectionAssert.AreEqual(testList, result);
         }
+
+        [TestMethod]
+        public void Save_AssignsIdToObject_Id()
+        {
+          //Arrange
+          Task testTask = new Task("Mow the lawn");
+
+          //Act
+          testTask.Save();
+          Task savedTask = Task.GetAll()[0];
+
+          int result = savedTask.GetId();
+          int testId = testTask.GetId();
+
+          //Assert
+          Assert.AreEqual(testId, result);
+        }
+
+        [TestMethod]
+        public void Find_FindsTaskInDatabase_Task()
+        {
+          //Arrange
+          Task testTask = new Task("Mow the lawn");
+          testTask.Save();
+
+          //Act
+          Task foundTask = Task.Find(testTask.GetId());
+
+          //Assert
+          Assert.AreEqual(testTask, foundTask);
+        }
     }
 }

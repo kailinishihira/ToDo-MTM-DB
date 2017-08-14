@@ -24,14 +24,20 @@ namespace ToDo.Models
       else
       {
         Task newTask = (Task) otherTask;
+        bool idEquality = (this.GetId() == newTask.GetId());
         bool descriptionEquality = (this.GetDescription() == newTask.GetDescription());
-        return (descriptionEquality);
+        return (idEquality && descriptionEquality);
       }
     }
 
     public string GetDescription()
     {
       return _description;
+    }
+
+    public int GetId()
+    {
+      return _id;
     }
 
     public void Save()
@@ -73,12 +79,38 @@ namespace ToDo.Models
         }
 
         public static void DeleteAll()
-      {
+        {
           MySqlConnection conn = DB.Connection();
           conn.Open();
           var cmd = conn.CreateCommand() as MySqlCommand;
           cmd.CommandText = @"DELETE FROM tasks;";
           cmd.ExecuteNonQuery();
+        }
+
+      public static Task Find(int id)
+      {
+         MySqlConnection conn = DB.Connection();
+         conn.Open();
+         var cmd = conn.CreateCommand() as MySqlCommand;
+         cmd.CommandText = @"SELECT * FROM `tasks` WHERE id = @thisId;";
+
+         MySqlParameter thisId = new MySqlParameter();
+         thisId.ParameterName = "@thisId";
+         thisId.Value = id;
+         cmd.Parameters.Add(thisId);
+
+         var rdr = cmd.ExecuteReader() as MySqlDataReader;
+
+         int taskId = 0;
+         string taskDescription = "";
+
+         while (rdr.Read())
+         {
+             taskId = rdr.GetInt32(0);
+             taskDescription = rdr.GetString(1);
+         }
+         Task foundTask= new Task(taskDescription, taskId);
+         return foundTask;
       }
   }
 }

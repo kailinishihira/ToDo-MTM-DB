@@ -26,6 +26,7 @@ namespace ToDo.Models
         return this.GetId().Equals(newCategory.GetId());
       }
     }
+
     public override int GetHashCode()
     {
       return this.GetId().GetHashCode();
@@ -61,7 +62,7 @@ namespace ToDo.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM tasks;";
+      cmd.CommandText = @"DELETE FROM categories;";
       cmd.ExecuteNonQuery();
       conn.Close();
       if (conn != null)

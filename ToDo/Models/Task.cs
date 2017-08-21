@@ -30,6 +30,11 @@ namespace ToDo.Models
       }
     }
 
+    public override int GetHashCode()
+    {
+      return this.GetId().GetHashCode();
+    }
+
     public string GetDescription()
     {
       return _description;

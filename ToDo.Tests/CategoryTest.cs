@@ -10,7 +10,7 @@ namespace ToDo.Tests
   {
     public CategoryTests()
     {
-        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=to_do_test;";
+        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=to_do_test;";
     }
 
     [TestMethod]

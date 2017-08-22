@@ -155,7 +155,7 @@ namespace ToDo.Models
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
       cmd.CommandText = @"SELECT tasks.*
-        FROM categories
+          FROM categories
         JOIN categories_tasks ON (categories.id = categories_tasks.category_id)
         JOIN tasks ON (categories_tasks.task_id = tasks.id)
         WHERE categories.id = @CategoryId;";

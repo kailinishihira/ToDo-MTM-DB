@@ -170,7 +170,11 @@ namespace ToDo.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"SELECT category_id FROM categories_tasks WHERE task_id = @taskId;";
+      cmd.CommandText = @"SELECT categories.*
+        FROM categories
+        JOIN categories_tasks ON (categories.id = categories_tasks.category_id)
+        JOIN tasks ON(tasks.id = categories_tasks.task_id)
+        WHERE task_id = @taskId;";
 
       MySqlParameter taskIdParameter = new MySqlParameter();
       taskIdParameter.ParameterName = "@taskId";
@@ -178,36 +182,14 @@ namespace ToDo.Models
       cmd.Parameters.Add(taskIdParameter);
 
       var rdr = cmd.ExecuteReader() as MySqlDataReader;
-
-      List<int> categoryIds = new List<int> {};
-      while(rdr.Read())
-      {
-        int categoryId = rdr.GetInt32(0);
-        categoryIds.Add(categoryId);
-      }
-      rdr.Dispose();
-
       List<Category> categories = new List<Category> {};
-      foreach (int categoryId in categoryIds)
-      {
-        var categoryQuery = conn.CreateCommand() as MySqlCommand;
-        categoryQuery.CommandText = @"SELECT * FROM categories WHERE id = @CategoryId;";
-
-        MySqlParameter categoryIdParameter = new MySqlParameter();
-        categoryIdParameter.ParameterName = "@CategoryId";
-        categoryIdParameter.Value = categoryId;
-        categoryQuery.Parameters.Add(categoryIdParameter);
-
-        var categoryQueryRdr = categoryQuery.ExecuteReader() as MySqlDataReader;
-        while(categoryQueryRdr.Read())
+        while(rdr.Read())
         {
-          int thisCategoryId = categoryQueryRdr.GetInt32(0);
-          string categoryName = categoryQueryRdr.GetString(1);
+          int thisCategoryId = rdr.GetInt32(0);
+          string categoryName = rdr.GetString(1);
           Category foundCategory = new Category(categoryName, thisCategoryId);
           categories.Add(foundCategory);
         }
-        categoryQueryRdr.Dispose();
-      }
       conn.Close();
       if (conn != null)
       {
